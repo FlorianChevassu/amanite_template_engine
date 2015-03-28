@@ -1,9 +1,9 @@
 Hello {{name}} ! Is the weather good in {{city}} ?
 Yes ! The weather is {{weatherStatus}} !
 Do You have family ?
-Yes :
+Yes : 
 {{#family}}
 	{{#brothers}}
-        *{{name}} {{parent.parent.name}}
- 	{{\brothers}}
+		*{{name}} {{= out << context.getParentContext().get("name").string_value();}}
+	{{\brothers}}
 {{\family}}
