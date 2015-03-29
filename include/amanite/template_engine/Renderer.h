@@ -22,12 +22,109 @@ namespace amanite {
 			script::ScriptEngine m_scriptingEngine;
 
 		public:
-			template<class Context>
+			template<class Context, class HasParentFuncType = decltype(&Context::hasParent), HasParentFuncType hasParentFunc = &Context::hasParent>
 			void render(const Context& c, std::ostream& os, const CompiledTemplate& tmpl, const Context* parentContext = nullptr) {
-				render(c, os, tmpl.getNodes(), tmpl.getDeps(), parentContext);
+				render<Context, HasParentFuncType, hasParentFunc>(c, os, tmpl.getNodes(), tmpl.getDeps(), parentContext);
 			}
 		private:
-			template<class Context>
+
+			/**
+			 * Proxies for the context class
+			 */
+
+			template <class Context, bool (Context::* hasParentMemberFunc)() const>
+			bool hasParentProxy(const Context& c) const {
+				return (c.*hasParentMemberFunc)();
+			}
+
+			template <class Context, bool (* hasParentFunc)(const Context&)>
+			bool hasParentProxy(const Context& c) const {
+				return hasParentFunc(c);
+			}
+
+			template <class Context, const Context& (Context::* getParentContextFunc)() const>
+			const Context& getParentContextProxy(const Context& c) const {
+				return (c.*getParentContextFunc)();
+			}
+
+			template <class Context, const Context& (* getParentContextFunc)(const Context&)>
+			const Context& getParentContextProxy(const Context& c) const {
+				return getParentContextFunc(c);
+			}
+
+			template <class Context, const Context& (Context::* getItemFunc)(const std::string& val) const>
+			const Context& getItemProxy(const Context& c, const std::string& val) const {
+				return (c.*getItemFunc)(val);
+			}
+
+			template <class Context, const Context& (* getItemFunc)(const Context&, const std::string& val)>
+			const Context& getItemProxy(const Context& c, const std::string& val) const {
+				return getItemFunc(c, val);
+			}
+
+			template <class Context, std::string (Context::* getAsStringFunc)() const>
+			std::string getAsStringProxy(const Context& c) const {
+				return (c.*getAsStringFunc)();
+			}
+
+			template <class Context, std::string (* getAsStringFunc)(const Context&)>
+			std::string getAsStringProxy(const Context& c) const {
+				return getAsStringFunc(c);
+			}
+
+			template <class Context, bool (Context::* isArrayFunc)() const>
+			bool isArrayProxy(const Context& c) const {
+				return (c.*isArrayFunc)();
+			}
+
+			template <class Context, bool (* isArrayFunc)(const Context&)>
+			bool isArrayProxy(const Context& c) const {
+				return isArrayFunc(c);
+			}
+
+			template <class Context, bool (Context::* isObjectFunc)() const>
+			bool isObjectProxy(const Context& c) const {
+				return (c.*isObjectFunc)();
+			}
+
+			template <class Context, bool (* isObjectFunc)(const Context&)>
+			bool isObjectProxy(const Context& c) const {
+				return isObjectFunc(c);
+			}
+
+			template <class Context, const std::vector<Context>& (Context::* getAsArrayFunc)() const>
+			const std::vector<Context>& getAsArrayProxy(const Context& c) const {
+				return (c.*getAsArrayFunc)();
+			}
+
+			template <class Context, const std::vector<Context>& (* getAsArrayFunc)(const Context&)>
+			const std::vector<Context>& getAsArrayProxy(const Context& c) const {
+				return getAsArrayFunc(c);
+			}
+
+
+			template<class Context,
+					class HasParentFuncType = decltype(&Context::hasParent),
+					HasParentFuncType hasParentFunc = &Context::hasParent,
+
+					class GetParentContextFuncType = decltype(&Context::getParentContext),
+					GetParentContextFuncType getParentContextFunc = &Context::getParentContext,
+
+					class GetItemFuncType = decltype(&Context::operator[]),
+					GetItemFuncType getItemFunc = &Context::operator[],
+
+					class GetAsStringFuncType = decltype(&Context::getAsString),
+					GetAsStringFuncType getAsStringFunc = &Context::getAsString,
+
+					class IsArrayFuncType = decltype(&Context::isArray),
+					IsArrayFuncType isArrayFunc = &Context::isArray,
+
+					class IsObjectFuncType = decltype(&Context::isObject),
+					IsObjectFuncType isObjectFunc = &Context::isObject,
+
+					class GetAsArrayFuncType = decltype(&Context::getAsArray),
+					GetAsArrayFuncType getAsArrayFunc = &Context::getAsArray
+			>
 			void render(const Context& c, std::ostream& os, const std::list<Node>& tmpl, const std::map<std::string, std::list<Node>>& deps, const Context* parentContext = nullptr) {
 				m_scriptingEngine.registerVariable(os, "out");
 				m_scriptingEngine.registerVariable(c, "context");
@@ -46,14 +143,12 @@ namespace amanite {
 							applyTags(item.tags);
 							const Context* currentContext = &c;
 							for(int i = 0; i < getState().contextOffset; ++i) {
-								if(currentContext->is_root()) {
-									throw std::runtime_error("ROOT does not have parents");
+								if(!hasParentProxy<Context, hasParentFunc>(*currentContext)) {
+									throw std::runtime_error("Context does not have parents");
 								}
-								currentContext = &currentContext->getParentContext();
+								currentContext = &getParentContextProxy<Context, getParentContextFunc>(*currentContext);
 							}
-							const Context& currentContextRef = *currentContext;
-
-							os << currentContextRef[item.value].getAsString();
+							os << getAsStringProxy<Context, getAsStringFunc>(getItemProxy<Context, getItemFunc>(*currentContext, item.value));
 							popState();
 						}
 							break;
@@ -63,25 +158,24 @@ namespace amanite {
 							applyTags(item.tags);
 							const Context* currentContext = &c;
 							for(int i = 0; i < getState().contextOffset; ++i) {
-								if(currentContext->is_root()) {
-									throw std::runtime_error("ROOT does not have parents");
+								if(!hasParentProxy<Context, hasParentFunc>(*currentContext)) {
+									throw std::runtime_error("Context does not have parents");
 								}
-								currentContext = &currentContext->getParentContext();
+								currentContext = &getParentContextProxy<Context, getParentContextFunc>(*currentContext);
 							}
 
-							const Context& currentContextRef = *currentContext;
-							if(currentContextRef[item.value].isArray()) {
-								auto& secItems = currentContextRef[item.value].getAsArray();
+							if(isArrayProxy<Context, isArrayFunc>(getItemProxy<Context, getItemFunc>(*currentContext, item.value))) {
+								auto& secItems = getAsArrayProxy<Context, getAsArrayFunc>(getItemProxy<Context, getItemFunc>(*currentContext, item.value));
 								std::for_each(secItems.begin(), secItems.end(), [&](const Context& secIt) {
-									render<Context>(secIt, os, item.children, deps, &currentContextRef);
+									render<Context, HasParentFuncType, hasParentFunc>(secIt, os, item.children, deps, currentContext);
 								});
-							} else if(c[item.value].isObject()) {
-								render<Context>(currentContextRef[item.value], os, item.children, deps, &currentContextRef);
+							} else if(isObjectProxy<Context, isObjectFunc>(getItemProxy<Context, getItemFunc>(*currentContext, item.value))) {
+								render<Context, HasParentFuncType, hasParentFunc>(getItemProxy<Context, getItemFunc>(*currentContext, item.value), os, item.children, deps, currentContext);
 							}
 						}
 							break;
 						case Node::Type::partial:
-							render<Context>(c, os, deps.find(item.value)->second, deps, parentContext);
+							render<Context, HasParentFuncType, hasParentFunc>(c, os, deps.find(item.value)->second, deps, parentContext);
 							break;
 						case Node::Type::code:
 							m_scriptingEngine.eval(item.value);
@@ -253,8 +347,6 @@ namespace amanite {
 					}
 				});
 			}
-
-
 		};
 	}
 }

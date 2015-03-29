@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-INIT_BIICODE_BLOCK()
 #set(BII_LIB_SRC
 #	${CMAKE_CURRENT_SOURCE_DIR}/include/ATE.h;
 #	${CMAKE_CURRENT_SOURCE_DIR}/include/stdlib.h;
