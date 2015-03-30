@@ -4,30 +4,44 @@
 
 int main(){
 	using namespace amanite::template_engine;
+
 	Compiler tec;
 
-	//tec.registerContext<JsonContext>();
-	CompiledTemplate res = tec.compile("FlorianChevassu/ATE/tests/test1.mustache");
+	std::string templateContent = R"(Hello {{name}}
+You have just won {{value}} dollars!
+{{#in_ca}}
+	 Well, {{taxed_value}} dollars, after taxes.
+{{/in_ca}})";
 
-	//assert(res.size() == 3);
+	std::cout << templateContent << std::endl;
 
-	json11::Json data = json11::Json::object {
-		{ "name", "Florian" },
-		{ "city", "Lyon" },
-		{"family", json11::Json::object {
-						{"name", "Chevassu"},
-						{"brothers", json11::Json::array{
-										json11::Json::object { {"name", "Jo"} },
-										json11::Json::object { {"name", "Cécile"} },
-									}
-						}
-					}
-				}
-		};
+	istringstream iss(templateContent);
 
-	Renderer ter;
+	CompiledTemplate res = tec.compile(iss);
 
-	ter.render<context::JsonContext, decltype(&context::JsonContext::hasParent), &context::JsonContext::hasParent>(context::JsonContext(data), std::cout, res);
+
+	string err;
+
+	json11::Json data = json11::Json::parse(R"({
+								"name": "Chris",
+								"value": 10000,
+								"taxed_value": 6000,
+								"in_ca": true
+							})", err);
+
+	context::JsonContext dataCtx = data;
+
+	std::cout << "dataCtx.get(\"name\") = " << dataCtx.get("name").getAsString() << std::endl;
+
+
+	std::cout << err << std::endl;
+	assert(err.empty());
+
+	std::cout << data.dump();
+
+	Renderer<context::JsonContext> ter;
+
+	ter.render(context::JsonContext(data), std::cout, res);
 
 
 	return 0;

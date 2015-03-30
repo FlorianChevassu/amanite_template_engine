@@ -46,13 +46,6 @@ namespace amanite {
 					return *m_parent;
 				}
 
-				std::string getAsString() const {
-					if(m_json != nullptr)
-						return m_json->string_value();
-					else
-						return "";
-				}
-
 				std::string dump() const {
 					if(m_json != nullptr)
 						return m_json->dump();
@@ -81,6 +74,50 @@ namespace amanite {
 					for(auto& item : ai)
 						m_array_items.push_back(JsonContext(item, *this));
 					return m_array_items;
+				}
+
+
+
+				bool isString() const{
+					return m_json->is_string();
+				}
+
+				std::string getAsString() const {
+					std::string res;
+					if(m_json == nullptr) {
+						res = "";
+					}else if(m_json->is_bool()) {
+						res = m_json->bool_value() ? "true" : "false";
+					} else if(m_json->is_null()) {
+						res = "null";
+					} else if(m_json->is_number()) {
+						res = std::to_string(m_json->number_value());
+					} else if(m_json->is_string()) {
+						res = m_json->string_value();
+					}else{
+						res = m_json->dump();
+					}
+					return res;
+				}
+
+				bool isDouble() const{
+					return m_json->is_number();
+				}
+
+				double getAsDouble(){
+					return m_json->number_value();
+				}
+
+				bool isBoolean() const{
+					return m_json->is_bool();
+				}
+
+				double getAsBoolean(){
+					return m_json->bool_value();
+				}
+
+				bool isNull() const{
+					return m_json->is_null();
 				}
 			};
 		}
