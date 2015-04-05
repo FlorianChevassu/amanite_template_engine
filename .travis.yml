@@ -6,6 +6,10 @@ env:
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
+  - sudo mkdir blocks
+  - sudo cd blocks
+  - sudo mkdir FlorianChevassu
+  - sudo cd FlorianChevassu
 
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
