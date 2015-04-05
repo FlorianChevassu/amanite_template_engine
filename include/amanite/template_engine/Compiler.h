@@ -201,8 +201,13 @@ namespace amanite {
 							is.unget();
 						return ss.str();
 					} else {
+						int numCharToUnGet = s.substr(endIndex + 2).size();
+						if(!is.eof()){
+							++numCharToUnGet;
+						}
+
 						//"unget" the characters that that we do not need, so that it will be handled by the next iteration.
-						for(int i = 0; i < s.substr(endIndex + 2).size() + 1; ++i)
+						for(int i = 0; i < numCharToUnGet; ++i)
 							is.unget();
 
 						return s.substr(startIndex + 2, endIndex - startIndex - 2);

@@ -12,26 +12,26 @@ namespace amanite {
 	namespace template_engine {
 		namespace context {
 
-			struct JsonContext {
+			struct JsonContextAdapter {
 				const json11::Json* m_json;
-				const JsonContext* m_parent;
-				mutable std::map <std::string, std::unique_ptr<JsonContext>> m_children;
-				mutable std::vector <JsonContext> m_array_items;
+				const JsonContextAdapter* m_parent;
+				mutable std::map <std::string, std::unique_ptr<JsonContextAdapter>> m_children;
+				mutable std::vector <JsonContextAdapter> m_array_items;
 
-				JsonContext() : m_json(nullptr), m_parent(nullptr) { }
+				JsonContextAdapter() : m_json(nullptr), m_parent(nullptr) { }
 
-				JsonContext(const json11::Json& json) : m_json(&json), m_parent(nullptr) { }
+				JsonContextAdapter(const json11::Json& json) : m_json(&json), m_parent(nullptr) { }
 
-				JsonContext(const json11::Json& json, const JsonContext& parent) : m_json(&json), m_parent(&parent) { }
+				JsonContextAdapter(const json11::Json& json, const JsonContextAdapter& parent) : m_json(&json), m_parent(&parent) { }
 
-				const JsonContext& operator[](const std::string& key) const {
+				const JsonContextAdapter& operator[](const std::string& key) const {
 					return get(key);
 				}
 
-				const JsonContext& get(const std::string& key) const {
+				const JsonContextAdapter& get(const std::string& key) const {
 					auto item = m_children.find(key);
 					if(item == m_children.end()) {
-						m_children[key] = std::unique_ptr<JsonContext>(new JsonContext((*m_json)[key], *this));
+						m_children[key] = std::unique_ptr<JsonContextAdapter>(new JsonContextAdapter((*m_json)[key], *this));
 						return *(m_children[key].get());
 					} else {
 						return *(item->second.get());
@@ -42,7 +42,7 @@ namespace amanite {
 					return m_parent != nullptr;
 				}
 
-				const JsonContext& getParentContext() const {
+				const JsonContextAdapter& getParentContext() const {
 					return *m_parent;
 				}
 
@@ -67,12 +67,12 @@ namespace amanite {
 						return false;
 				}
 
-				const std::vector <JsonContext>& getAsArray() const {
+				const std::vector <JsonContextAdapter>& getAsArray() const {
 					const json11::Json::array& ai = m_json->array_items();
 					m_array_items.clear();//???
 					m_array_items.reserve(ai.size());
 					for(auto& item : ai)
-						m_array_items.push_back(JsonContext(item, *this));
+						m_array_items.push_back(JsonContextAdapter(item, *this));
 					return m_array_items;
 				}
 
@@ -104,7 +104,7 @@ namespace amanite {
 					return m_json->is_number();
 				}
 
-				double getAsDouble(){
+				double getAsDouble() const{
 					return m_json->number_value();
 				}
 
@@ -112,7 +112,7 @@ namespace amanite {
 					return m_json->is_bool();
 				}
 
-				double getAsBoolean(){
+				double getAsBoolean() const{
 					return m_json->bool_value();
 				}
 

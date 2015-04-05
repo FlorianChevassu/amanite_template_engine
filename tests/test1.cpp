@@ -1,6 +1,6 @@
 #include "amanite/template_engine/Compiler.h"
 #include "amanite/template_engine/Renderer.h"
-#include "amanite/template_engine/context/JsonContext.h"
+#include "amanite/template_engine/contexts/JsonContextAdapter.h"
 
 int main(){
 	using namespace amanite::template_engine;
@@ -10,10 +10,10 @@ int main(){
 	std::string templateContent = R"(Hello {{name}}
 You have just won {{value}} dollars!
 {{#in_ca}}
-	 Well, {{taxed_value}} dollars, after taxes.
+Well, {{= 10000 - (10000 * 0.4)}} dollars, after taxes.
 {{/in_ca}})";
 
-	std::cout << templateContent << std::endl;
+	//std::cout << templateContent << std::endl;
 
 	istringstream iss(templateContent);
 
@@ -29,19 +29,18 @@ You have just won {{value}} dollars!
 								"in_ca": true
 							})", err);
 
-	context::JsonContext dataCtx = data;
+	context::JsonContextAdapter dataCtx = data;
 
-	std::cout << "dataCtx.get(\"name\") = " << dataCtx.get("name").getAsString() << std::endl;
+	//std::cout << "dataCtx.get(\"name\") = " << dataCtx.get("name").getAsString() << std::endl;
 
 
 	std::cout << err << std::endl;
 	assert(err.empty());
 
-	std::cout << data.dump();
 
-	Renderer<context::JsonContext> ter;
+	Renderer<context::JsonContextAdapter> ter;
 
-	ter.render(context::JsonContext(data), std::cout, res);
+	ter.render(context::JsonContextAdapter(data), std::cout, res);
 
 
 	return 0;
