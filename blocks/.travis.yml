@@ -22,5 +22,4 @@ script:
   - bii find --update #Find biicode dependencies
   - bii cpp:configure #Configure block for building
   - bii cpp:build #Build block
-  - cd bin && ls
-  - ./bin/FlorianChevassu_ATE_tests_test1
+  - ./bin/FlorianChevassu_AmaniteTemplateEngine_tests_test1
