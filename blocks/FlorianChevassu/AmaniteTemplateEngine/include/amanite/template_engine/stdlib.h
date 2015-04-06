@@ -38,6 +38,7 @@ namespace amanite {
 				lib->add(chaiscript::fun(&print_ostream<std::string>), "<<");
 				lib->add(chaiscript::fun(&print_ostream<std::time_t>), "<<");
 				lib->add(chaiscript::fun(&print_ostream<std::size_t>), "<<");
+				lib->add(chaiscript::fun(&print_ostream<double>), "<<");
 
 
 				lib->add(chaiscript::fun(&now), "now");

@@ -92,6 +92,8 @@ namespace amanite {
 					}
 					currentContext = &currentContext->getParentContext();
 				}
+
+				//TODO : escape characters if m_engineStateStack.getCurrentState().escape is set to true.
 				os << currentContext->get(node.value).getAsString();
 				m_engineStateStack.popState();
 			}

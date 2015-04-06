@@ -7,6 +7,7 @@ namespace amanite{
 			struct EngineState{
 				bool skipText = false;
 				bool verbatim = false;
+				bool escape = false;
 
 				int contextOffset = 0;
 			};
@@ -46,7 +47,8 @@ namespace amanite{
 			enum Tag {
 				SKIP_TEXT,
 				VERBATIM,
-				CONTEXT_OFFSET
+				CONTEXT_OFFSET,
+				ESCAPE
 			};
 
 			static Tag getTag(const std::string& tagStr) {
@@ -57,6 +59,8 @@ namespace amanite{
 					res = SKIP_TEXT;
 				else if(tagStr.compare("contextOffset") == 0)
 					res = CONTEXT_OFFSET;
+				else if(tagStr.compare("escape") == 0)
+					res = ESCAPE;
 				else
 					throw std::runtime_error("BAD TAG" + tagStr);
 
@@ -74,6 +78,9 @@ namespace amanite{
 						break;
 					case VERBATIM:
 						getCurrentState().verbatim = !negate;
+						break;
+					case ESCAPE:
+						getCurrentState().escape = !negate;
 						break;
 				}
 			}

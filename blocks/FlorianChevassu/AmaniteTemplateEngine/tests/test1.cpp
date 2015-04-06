@@ -10,7 +10,7 @@ int main(){
 	std::string templateContent = R"(Hello {{name}}
 You have just won {{value}} dollars!
 {{#in_ca}}
-Well, {{= 10000 - (10000 * 0.4)}} dollars, after taxes.
+Well, {{= out << 10000 - (10000 * 0.4)}} dollars, after taxes.
 {{/in_ca}})";
 
 	//std::cout << templateContent << std::endl;
@@ -25,13 +25,10 @@ Well, {{= 10000 - (10000 * 0.4)}} dollars, after taxes.
 	json11::Json data = json11::Json::parse(R"({
 								"name": "Chris",
 								"value": 10000,
-								"taxed_value": 6000,
 								"in_ca": true
 							})", err);
 
 	context::JsonContextAdapter dataCtx = data;
-
-	//std::cout << "dataCtx.get(\"name\") = " << dataCtx.get("name").getAsString() << std::endl;
 
 
 	std::cout << err << std::endl;
