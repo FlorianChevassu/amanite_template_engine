@@ -7,8 +7,7 @@ before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
 
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION} && export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
 install:
   - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh #Install biicode
   - bii setup:cpp #Install biicode required C/C++ tools (GCC, cmake, etc)
