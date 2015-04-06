@@ -12,12 +12,6 @@ before_install:
 install:
   - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh #Install biicode
   - bii setup:cpp #Install biicode required C/C++ tools (GCC, cmake, etc)
-  - bii init ATE
-  - cd ATE
-  - mkdir blocks
-  - cd blocks
-  - mkdir FlorianChevassu
-  - cd FlorianChevassu
 script:
   - bii find --update #Find biicode dependencies
   - bii cpp:configure #Configure block for building
