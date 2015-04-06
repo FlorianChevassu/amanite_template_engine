@@ -13,7 +13,7 @@ install:
   - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh #Install biicode
   - bii setup:cpp #Install biicode required C/C++ tools (GCC, cmake, etc)
 script:
-  - bii find --update #Find biicode dependencies
-  - bii cpp:configure #Configure block for building
-  - bii cpp:build #Build block
+  - bii find --update
+  - bii cpp:configure
+  - bii cpp:build
   - ./bin/FlorianChevassu_AmaniteTemplateEngine_tests_test1
