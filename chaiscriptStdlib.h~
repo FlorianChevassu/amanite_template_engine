@@ -1,0 +1,13 @@
+#pragma once
+
+#include <chaiscript/chaiscript.hpp>
+
+namespace mni {
+	namespace script {
+		namespace stdlib {
+			namespace detail {
+				chaiscript::ModulePtr getChaiscriptStdLib();
+			}
+		}
+	}
+}

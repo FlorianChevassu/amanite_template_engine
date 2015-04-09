@@ -1,3 +1,0 @@
- # Layout for CLion IDE with root CMakeLists at project root
-# This layout DOES NOT allow root-block, as it will overwrite the project CMakeLists
-cmake: /

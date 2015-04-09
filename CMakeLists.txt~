@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
-#set(BII_LIB_SRC
-#	${CMAKE_CURRENT_SOURCE_DIR}/include/ATE.h;
-#	${CMAKE_CURRENT_SOURCE_DIR}/include/stdlib.h;
-#	${CMAKE_CURRENT_SOURCE_DIR}/include/scriptEngine.h;
-#)
-#unset(BII_BLOCK_EXES)
+INIT_BIICODE_BLOCK()
+set(BII_LIB_SRC 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/ATE.h;
+	${CMAKE_CURRENT_SOURCE_DIR}/include/stdlib.h;
+	${CMAKE_CURRENT_SOURCE_DIR}/include/scriptEngine.h;
+)
+unset(BII_BLOCK_EXES)
 ADD_BIICODE_TARGETS()
 
 INCLUDE(biicode/cmake/tools) # Include tools.cmake file from cmake block from the "biicode" user
