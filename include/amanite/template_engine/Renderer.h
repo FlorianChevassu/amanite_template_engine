@@ -15,7 +15,6 @@
 #include <chaiscript/utility/utility.hpp>
 #include "scriptEngine.h"
 #include "Node.h"
-#include "stringutils.h"
 
 namespace amanite {
 	namespace template_engine {

@@ -12,7 +12,7 @@
 #include <boost/filesystem.hpp>
 #include <chaiscript/utility/utility.hpp>
 #include "scriptEngine.h"
-#include "stringutils.h"
+#include "amanite/tools/StringUtils.h"
 
 #include "CompiledTemplate.h"
 #include "Node.h"
@@ -121,21 +121,21 @@ namespace amanite {
 					if(node.size() > 0) {
 						//detect the node type
 						const Configuration& config = getConfiguration();
-						if(starts_with(node, config.sectionNodeStartTag)) {
+						if(tools::startsWith(node, config.sectionNodeStartTag)) {
 							res.splice(res.end(), compileSectionNode(node, is));
-						} else if(starts_with(node, config.scopeNodeStartTag)) {
+						} else if(tools::startsWith(node, config.scopeNodeStartTag)) {
 							res.push_back(compileStartScopeNode(node, is));
 							return res;
-						} else if(starts_with(node, config.scopeNodeEndTag)) {
+						} else if(tools::startsWith(node, config.scopeNodeEndTag)) {
 							res.push_back(compileEndScopeNode(node, is));
 							return res;
-						} else if(starts_with(node, config.partialNodeStartTag)) {
+						} else if(tools::startsWith(node, config.partialNodeStartTag)) {
 							res.push_back(compilePartialNode(node, is));
-						} else if(starts_with(node, config.localPartialNodeStartTag)) {
+						} else if(tools::startsWith(node, config.localPartialNodeStartTag)) {
 							compileLocalPartial(node, is);
-						} else if(starts_with(node, config.scriptNodeStartTag)) {
+						} else if(tools::startsWith(node, config.scriptNodeStartTag)) {
 							res.push_back(compileScriptNode(node, is));
-						} else if(starts_with(node, config.commentNodeStartTag)) {
+						} else if(tools::startsWith(node, config.commentNodeStartTag)) {
 							//comment. Nothing to do
 						} else {
 							res.splice(res.end(), compileVariableNode(node, is));
@@ -224,7 +224,7 @@ namespace amanite {
 				tags.pop_front();
 
 				//if key contains points ('.'), split it into multiple sections
-				std::vector<std::string> sections = split(key, '.');
+				std::vector<std::string> sections = tools::split(key, '.');
 
 				//Node res(Node::Type::section, sections[0], tags);
 				std::list<Node> res;
@@ -320,7 +320,7 @@ namespace amanite {
 				tags.pop_front();
 
 				//if key contains points ('.'), split it into multiple sections
-				std::vector<std::string> sections = split(key, '.');
+				std::vector<std::string> sections = tools::split(key, '.');
 				key = sections.back();
 				sections.pop_back();
 

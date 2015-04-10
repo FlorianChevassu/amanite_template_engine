@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "amanite/template_engine/Compiler.h"
 #include "amanite/template_engine/Renderer.h"
 #include "amanite/template_engine/contexts/JsonContextAdapter.h"
@@ -15,12 +17,12 @@ Well, {{= out << 10000 - (10000 * 0.4)}} dollars, after taxes.
 
 	//std::cout << templateContent << std::endl;
 
-	istringstream iss(templateContent);
+	std::istringstream iss(templateContent);
 
 	CompiledTemplate res = tec.compile(iss);
 
 
-	string err;
+	std::string err;
 
 	json11::Json data = json11::Json::parse(R"({
 								"name": "Chris",
