@@ -1,5 +1,25 @@
 cmake_minimum_required(VERSION 3.0)
 
+## get cmakepp
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
+    file(DOWNLOAD "https://github.com/toeb/cmakepp/releases/download/v0.0.7/cmakepp.cmake" "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
+endif()
+include("${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
+
+
+##########
+# Json11 #
+##########
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11)
+    message("installing Json11 from github")
+    package_source_pull_github(dropbox/json11 dependencies/Json11)
+    ans(package_handle)
+    if(NOT package_handle)
+        message(FATAL_ERROR "could not pull Json11")
+    endif()
+endif()
+
+
 if(BIICODE)
     add_bii_targets()
 
@@ -9,31 +29,12 @@ if(BIICODE)
     #Include biicode Boost setup
     include(biicode/boost/setup)
     bii_find_boost(COMPONENTS system filesystem REQUIRED)
+
+    target_include_directories(${BII_BLOCK_TARGET} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11")
     target_include_directories(${BII_BLOCK_TARGET} INTERFACE ${Boost_INCLUDE_DIRS})
     target_link_libraries(${BII_BLOCK_TARGET} INTERFACE ${Boost_LIBRARIES})
 
 else(BIICODE)
-
-    ## get cmakepp
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-        file(DOWNLOAD "https://github.com/toeb/cmakepp/releases/download/v0.0.7/cmakepp.cmake" "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-    endif()
-    include("${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-
-
-    ##########
-    # Json11 #
-    ##########
-    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11)
-        message("installing Json11 from github")
-        package_source_pull_github(dropbox/json11 dependencies/Json11)
-        ans(package_handle)
-        if(NOT package_handle)
-            message(FATAL_ERROR "could not pull Json11")
-        endif()
-    endif()
-
-
 
     project(Amanite)
 
