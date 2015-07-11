@@ -1,25 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-## get cmakepp
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-    file(DOWNLOAD "https://github.com/toeb/cmakepp/releases/download/v0.0.7/cmakepp.cmake" "${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-endif()
-include("${CMAKE_CURRENT_BINARY_DIR}/cmakepp.cmake")
-
-
-##########
-# Json11 #
-##########
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11)
-    message("installing Json11 from github")
-    package_source_pull_github(dropbox/json11 dependencies/Json11)
-    ans(package_handle)
-    if(NOT package_handle)
-        message(FATAL_ERROR "could not pull Json11")
-    endif()
-endif()
-
-
 if(BIICODE)
     add_bii_targets()
 
@@ -39,17 +19,19 @@ else(BIICODE)
     project(Amanite)
 
     include(ExternalProject)
-
+	set(Boost_USE_STATIC_LIBS   ON)
     find_package(Boost
       1.47.0        #TODO : what is the minimal version needed ?
       REQUIRED
       COMPONENTS system filesystem)
-
+	
+	include_directories(${Boost_INCLUDE_DIRS})
+	
     include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
     ##############
     # ChaiScript #
-    ##############
+    ############## 
     ExternalProject_Add(
         ChaiScript
         SVN_REPOSITORY https://github.com/ChaiScript/ChaiScript/tags/v5.6.0
@@ -67,20 +49,27 @@ else(BIICODE)
     )
     ExternalProject_Get_Property(ChaiScript SOURCE_DIR)
     include_directories(SYSTEM ${SOURCE_DIR}/include)
-
-
-    ##########
-    # Json11 #
-    ##########
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11)
-
-    set(JSON11_SRC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11/json11.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Json11/json11.cpp)
-
-    add_executable(Amanite_Test ${JSON11_SRC} tests/test1.cpp)
+	if (MSVC)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+	endif()
+	
+	add_subdirectory(include)
+	
+	#Group files in folders for Visual Studio
+	set(REG_EXT "[^/]*([.]cpp|[.]h|[.]hpp|[.]txt)$")
+	foreach(fileName ${Amanite_SRC})
+		get_filename_component(fileFolder ${fileName} DIRECTORY)
+		string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/include/" "" fileFolder ${fileFolder})
+		string(REPLACE "/" "\\\\" fileFolderSourceGroup ${fileFolder})
+		source_group(${fileFolderSourceGroup} REGULAR_EXPRESSION ".*/include/${fileFolder}/${REG_EXT}")
+	endforeach()
+	
+    add_executable(Amanite_Test ${Amanite_SRC} tests/test1.cpp)
 
     add_dependencies(Amanite_Test ChaiScript)
     set_property(TARGET Amanite_Test PROPERTY CXX_STANDARD 14)
-    target_link_libraries(Amanite_Test boost_system boost_filesystem pthread dl)
+    #arget_link_libraries(Amanite_Test system filesystem pthread dl)
+	target_link_libraries(Amanite_Test ${Boost_LIBRARIES})
+	
 
 endif(BIICODE)

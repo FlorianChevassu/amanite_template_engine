@@ -24,8 +24,6 @@ namespace amanite {
 		class Renderer {
 			script::ScriptEngine m_scriptingEngine;
 
-
-
 			/***********************/
 			/* Main rendering code */
 			/***********************/
@@ -111,7 +109,7 @@ namespace amanite {
 
 				if(currentContext->get(node.value).isArray()) {
 					auto& secItems = currentContext->get(node.value).getAsArray();
-					std::for_each(secItems.begin(), secItems.end(), [&](const Context& secIt) {
+					std::for_each(std::begin(secItems), std::end(secItems), [&](const Context& secIt) {
 						render(secIt, os, node.children, deps, currentContext);
 					});
 				} else if(currentContext->get(node.value).isObject()) {
@@ -120,6 +118,7 @@ namespace amanite {
 					const Context& ctx = currentContext->get(node.value);
 					bool needRendering = false;
 					if(ctx.isDouble()){
+						//TODO : >0 or !=0 ?? The problem with !=0 is that itcannot be done rigorously for doubles...
 						needRendering = ctx.getAsDouble() > 0;
 					}else if(ctx.isBoolean()){
 						needRendering = ctx.getAsBoolean();

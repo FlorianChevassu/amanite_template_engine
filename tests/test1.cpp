@@ -2,7 +2,7 @@
 
 #include "amanite/template_engine/Compiler.h"
 #include "amanite/template_engine/Renderer.h"
-#include "amanite/template_engine/contexts/JsonContextAdapter.h"
+#include "amanite/template_engine/contexts/json/JsonContextAdapter.h"
 
 int main(){
 	using namespace amanite::template_engine;

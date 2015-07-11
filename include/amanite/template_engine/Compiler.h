@@ -164,7 +164,7 @@ namespace amanite {
 					ss << s.substr(0, startIndex);
 
 					//"unget" the characters that that we do not need, so that it will be handled by the next iteration.
-					for(int i = 0; i < s.substr(startIndex).size() + 1; ++i)
+					for(std::size_t i = 0; i < s.substr(startIndex).size() + 1; ++i)
 						is.unget();
 				}
 
@@ -197,7 +197,7 @@ namespace amanite {
 
 						ss << s.substr(0, endIndex) << std::endl;
 						//"unget" the characters that that we do not need, so that it will be handled by the next iteration.
-						for(int i = 0; i < s.substr(endIndex + 2).size() + 1; ++i)
+						for (std::size_t i = 0; i < s.substr(endIndex + 2).size() + 1; ++i)
 							is.unget();
 						return ss.str();
 					} else {

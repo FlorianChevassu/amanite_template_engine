@@ -1,0 +1,5 @@
+set(Amanite_SRC ${Amanite_SRC} 
+	${CMAKE_CURRENT_SOURCE_DIR}/JsonContextAdapter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/json11.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/json11.cpp
+	PARENT_SCOPE)
