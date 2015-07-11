@@ -2,7 +2,7 @@
 
 #include <string>
 #include <map>
-#include <vector>
+#include <list>
 #include <memory>
 
 #include "json11.hpp"
@@ -16,7 +16,7 @@ namespace amanite {
 				const json11::Json* m_json = nullptr;
 				const JsonContextAdapter* m_parent = nullptr;
 				mutable std::map <std::string, std::unique_ptr<JsonContextAdapter>> m_children;
-				mutable std::vector <JsonContextAdapter> m_array_items;
+				mutable std::list<JsonContextAdapter> m_array_items;
 
 				JsonContextAdapter(const json11::Json& json) : m_json(&json)/*, m_parent(nullptr)*/ { }
 
@@ -66,18 +66,18 @@ namespace amanite {
 						return false;
 				}
 
-				const std::vector <JsonContextAdapter>& getAsArray() const {
+				const std::list<JsonContextAdapter>& getAsArray() const {
 					//Ne compile pas car reserve requiert un ctr par copie au 
 					//cas où il faudrait copier des élements existants... c'est 
 					//exactement ce qu'on voulait éviter en utilisant reserve d'ailleurs.
 
 					//Revoir le contrat d'un adapteur pour que n'importe quel conteneur puisse etre utilisé... Utiliser les concepts serait cool !
 
-					//const json11::Json::array& ai = m_json->array_items();
-					//m_array_items.clear();//???
+					const json11::Json::array& ai = m_json->array_items();
+					m_array_items.clear();//???
 					//m_array_items.reserve(ai.size());
-					//for (const json11::Json& item : ai)
-					//	m_array_items.emplace_back(item, *this);
+					for (const json11::Json& item : ai)
+						m_array_items.emplace_back(item, *this);
 					return m_array_items;
 				}
 

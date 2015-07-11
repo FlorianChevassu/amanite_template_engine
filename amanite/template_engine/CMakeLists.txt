@@ -1,7 +1,4 @@
-	
-add_subdirectory(contexts)
-
-set(Amanite_SRC ${Amanite_SRC} 
+set(AMANITE_SRC ${AMANITE_SRC} 
 	${CMAKE_CURRENT_SOURCE_DIR}/CompiledTemplate.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Compiler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/EngineStateStack.h	

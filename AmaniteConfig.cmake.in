@@ -1,0 +1,23 @@
+# - Config file for the Amanite package
+# It defines the following variables
+#  AMANITE_INCLUDE_DIRS - include directories for Amanite
+#  AMANITE_LIBRARIES    - libraries to link against
+#  AMANITE_LIBRARY_DIRS - libraries directories for Amanite
+#  AMANITE_DEFINITIONS  - definitions needed to compile code including Amanite headers
+ 
+# Compute paths
+get_filename_component(AMANITE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(AMANITE_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+ 
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET amanite AND NOT Amanite_BINARY_DIR)
+  include("${AMANITE_CMAKE_DIR}/AmaniteTargets.cmake")
+endif()
+ 
+# These are IMPORTED targets created by AmaniteTargets.cmake, ie contexts and boost.
+set(AMANITE_LIBRARIES @CONF_LIBRARIES@)
+
+set(AMANITE_LIBRARY_DIRS "@CONF_LIBRARY_DIRS@")
+
+#definition required by Chaiscript
+set(AMANITE_DEFINITIONS "/bigobj")

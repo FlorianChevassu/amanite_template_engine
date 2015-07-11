@@ -1,0 +1,4 @@
+add_subdirectory(json)
+
+set(AMANITE_CONTEXTS_SRC ${AMANITE_CONTEXTS_SRC} 
+	PARENT_SCOPE)
